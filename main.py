@@ -10,6 +10,8 @@ df_hotels = pd.read_csv('hotels.csv', dtype={'ID': str})
 # Saved as a dictionary to make the comparison easier
 df_cards = pd.read_csv('cards.csv',
                        dtype=str).to_dict(orient='records')
+df_credentials = pd.read_csv('credentials.csv',
+                             dtype=str).to_dict(orient='records')
 
 
 class Hotel:
@@ -31,6 +33,7 @@ class Hotel:
                                      'AVAILABLE'].squeeze()
         if availability == 'yes':
             return True
+        # This is optional:
         else:
             return False
 
@@ -65,14 +68,39 @@ class CreditCard:
                      'holder': holder}
         return card_info
 
-    def validate(self, card_info):
+    def validate_card(self, card_info):
+        """Compares the dict created with the user's credit card info with the
+        dict created from the 'cards.csv', to validate it or not"""
         if card_info in df_cards:
+            return True
+
+
+# Adding another class inside the parentheses of another class is a concept
+# called inheritance. Allows to use all methods from the parent class,
+# + the newly created for the child class.
+# If CreditCard had a parameter (like username) in "def init", Authentication's
+# instance could also use it ("credit_card = Authentication(username)" for ex.)
+class Authentication(CreditCard):
+    """Asks the user to log in with credit card number + password
+    before proceeding with the booking"""
+    def ask_credentials(self):
+        credit_card_nbr = input('Enter your credit card number (1234): ')
+        time.sleep(1)
+        password = input('Enter your personal password (mypass): ')
+        time.sleep(3)
+        credentials = {'number': credit_card_nbr, 'password': password}
+        return credentials
+
+    def validate_credentials(self, credentials):
+        if credentials in df_credentials:
             return True
 
 
 # Loop to restart once a hotel has been booked
 while True:
+    # Converts the df to str to remove the index on the left, visually better
     print(df_hotels.to_string(index=False))
+    # Creates a separation line of hyphens
     print('-' * len(df_hotels.columns) * 12 + '\n')
 
     # Loop to ask again for the hotel ID if it wasn't entered correctly
@@ -89,15 +117,29 @@ while True:
     if hotel.is_available():
         name = input('Enter your name: ')
 
-        credit_card = CreditCard()
-        print('\nThe room needs to be paid in advanced '
-              'in order to be booked.\n')
+        credit_card = Authentication()
+        print("\nThe room needs to be paid in advanced "
+              "in order to be booked. \nLet's get you logged in first.\n")
+
+        # Loop to ask again for the credentials if they weren't correct
+        while True:
+            credentials = credit_card.ask_credentials()
+
+            if credit_card.validate_credentials(credentials):
+                print("\nYou were logged in successfully\n")
+                time.sleep(3)
+                print('\n' * 10)
+                break
+            else:
+                print("\nYour credentials aren't valid. Please try again")
+                time.sleep(3)
+                print('\n' * 10)
 
         # Loop to ask again for the credit card info if it wasn't correct
         while True:
             card_info = credit_card.ask_card_info()
 
-            if credit_card.validate(card_info):
+            if credit_card.validate_card(card_info):
                 break
             else:
                 print("\nThe credit card information isn't valid. "
