@@ -54,6 +54,18 @@ Hotel name: {self.hotel.name}
         return content
 
 
+class SpaTicket(ReservationTicket):
+    def generate(self):
+        content = '\n' * 10 + f"""
+        Thank you for your SPA reservation ! 
+        Here is the information related to the SPA:
+
+        Name: {self.cust_name}
+        Hotel name: {self.hotel.name}
+        """
+        return content
+
+
 class CreditCard:
     def ask_card_info(self):
         number = input("Please enter your credit card number (1234): ")
@@ -151,6 +163,22 @@ while True:
         reservation_ticket = ReservationTicket(customer_name=name,
                                                hotel_instance=hotel)
         print(reservation_ticket.generate())
+
+        while True:
+            answer_spa = input('Do you want to book a spa package ? : ')
+            if answer_spa.lower() in ['yes', 'no']:
+                break
+            else:
+                print('\n' * 10, "Invalid answer, "
+                                 "please respond by 'yes' or 'no'.\n")
+
+        if answer_spa.lower() == "yes":
+            spa_ticket = SpaTicket(customer_name=name, hotel_instance=hotel)
+            print(spa_ticket.generate())
+        else:
+            print('\n' * 10)
+            time.sleep(4)
+
         time.sleep(10)
         print('\n' * 5)
 
