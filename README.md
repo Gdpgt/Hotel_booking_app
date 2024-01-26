@@ -9,7 +9,7 @@ I'd like to thank Ardit Sulce, whose excellent course I had the opportunity to f
 
 ## Hotel Booking and Reservation System
 
-A Python command-line app that allows users to choose and book available hotels, make payments, and receive a reservation receipt. 
+A Python command-line based app that allows users to choose and book available hotels, make payments, and receive a reservation receipt. 
 The program uses pandas for data manipulation and reading CSV files to manage hotel information, credit card details, and user credentials.
 
 ## Usage
